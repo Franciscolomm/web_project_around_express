@@ -1,19 +1,39 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/cards');
 
 const app = express();
+const PORT = 3000;
 
+/* ========================
+   MIDDLEWARES (SIEMPRE ARRIBA)
+   ======================== */
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+/* ========================
+   RUTAS
+   ======================== */
 app.use('/users', usersRouter);
-app.use('/cards', cardsRouter);
 
-// Ruta inexistente
-app.use((req, res) => {
-  res.status(404).json({ message: 'Recurso solicitado no encontrado' });
+/* ========================
+   CONEXIÓN A MONGODB
+   ======================== */
+mongoose.connect('mongodb://127.0.0.1:27017/aroundb')
+  .then(() => {
+    console.log('Conectado a MongoDB');
+  })
+  .catch((err) => {
+    console.error('Error de conexión a MongoDB:', err);
+  });
+
+/* ========================
+   SERVIDOR
+   ======================== */
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
 
-app.listen(3000, () => {
-  console.log('Servidor escuchando en el puerto 3000');
-});
 
